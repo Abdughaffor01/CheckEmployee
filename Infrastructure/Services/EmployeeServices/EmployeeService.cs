@@ -61,7 +61,7 @@ public class EmployeeService : IEmployeeService
     }
 }
 
-public async Task<Response<bool>> AddEmployeeAsync(AddEmployeeDto model)
+public async Task<Response<GetEmployeeDto>> AddEmployeeAsync(AddEmployeeDto model)
 {
     try
     {
@@ -75,11 +75,21 @@ public async Task<Response<bool>> AddEmployeeAsync(AddEmployeeDto model)
         };
         await _context.Employees.AddAsync(employee);
         await _context.SaveChangesAsync();
-        return new Response<bool>(true);
+
+        var mapped = new GetEmployeeDto()
+        {
+            Id = employee.Id,
+            FirtName = employee.FirtName,
+            LastName = employee.LastName,
+            FatherName = employee.FatherName,
+            Position = employee.Position.ToString()
+        };
+        
+        return new Response<GetEmployeeDto>(mapped);
     }
     catch (Exception ex)
     {
-        return new Response<bool>(HttpStatusCode.InternalServerError, ex.Message);
+        return new Response<GetEmployeeDto>(HttpStatusCode.InternalServerError, ex.Message);
     }
 }
 
