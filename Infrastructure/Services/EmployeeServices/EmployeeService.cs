@@ -32,7 +32,7 @@ public class EmployeeService : IEmployeeService
     {
         try
         {
-            var employee =await (from e in _context.Employees
+            var employee = await (from e in _context.Employees
                 where e.Id == id
                 select new GetEmployeeByIdDto()
                 {
@@ -51,81 +51,80 @@ public class EmployeeService : IEmployeeService
                             NumOfHoursWorked = s.NumOfHoursWorked
                         }).ToList()
                 }).FirstOrDefaultAsync();
-     
-        if (employee == null) return new Response<GetEmployeeByIdDto>(HttpStatusCode.BadRequest);
-        return new Response<GetEmployeeByIdDto>(employee);
-    }
-    catch (Exception ex)
-    {
-        return new Response<GetEmployeeByIdDto>(HttpStatusCode.InternalServerError, ex.Message);
-    }
-}
 
-public async Task<Response<GetEmployeeDto>> AddEmployeeAsync(AddEmployeeDto model)
-{
-    try
-    {
-        var employee = new Employee()
+            if (employee == null) return new Response<GetEmployeeByIdDto>(HttpStatusCode.BadRequest);
+            return new Response<GetEmployeeByIdDto>(employee);
+        }
+        catch (Exception ex)
         {
-            Id = Guid.NewGuid().ToString(),
-            FirtName = model.FirtName,
-            LastName = model.LastName,
-            FatherName = model.FatherName,
-            Position = model.Position,
-        };
-        await _context.Employees.AddAsync(employee);
-        await _context.SaveChangesAsync();
+            return new Response<GetEmployeeByIdDto>(HttpStatusCode.InternalServerError, ex.Message);
+        }
+    }
 
-        var mapped = new GetEmployeeDto()
+    public async Task<Response<GetEmployeeDto>> AddEmployeeAsync(AddEmployeeDto model)
+    {
+        try
         {
-            Id = employee.Id,
-            FirtName = employee.FirtName,
-            LastName = employee.LastName,
-            FatherName = employee.FatherName,
-            Position = employee.Position.ToString()
-        };
-        
-        return new Response<GetEmployeeDto>(mapped);
-    }
-    catch (Exception ex)
-    {
-        return new Response<GetEmployeeDto>(HttpStatusCode.InternalServerError, ex.Message);
-    }
-}
+            var employee = new Employee()
+            {
+                Id = Guid.NewGuid().ToString(),
+                FirtName = model.FirtName,
+                LastName = model.LastName,
+                FatherName = model.FatherName,
+                Position = model.Position,
+            };
+            await _context.Employees.AddAsync(employee);
+            await _context.SaveChangesAsync();
 
-public async Task<Response<bool>> UpdateEmployeeAsync(UpdateEmployeeDto model)
-{
-    try
-    {
-        var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == model.Id);
-        if (employee == null) return new Response<bool>(HttpStatusCode.BadRequest);
-        employee.Position = model.Position;
-        employee.FirtName = model.FirtName;
-        employee.LastName = model.LastName;
-        employee.FatherName = model.FatherName;
-        await _context.SaveChangesAsync();
-        return new Response<bool>(true);
-    }
-    catch (Exception ex)
-    {
-        return new Response<bool>(HttpStatusCode.InternalServerError, ex.Message);
-    }
-}
+            var mapped = new GetEmployeeDto()
+            {
+                Id = employee.Id,
+                FirtName = employee.FirtName,
+                LastName = employee.LastName,
+                FatherName = employee.FatherName,
+                Position = employee.Position.ToString()
+            };
 
-public async Task<Response<bool>> DeleteEmployeeAsync(string id)
-{
-    try
-    {
-        var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
-        if (employee == null) return new Response<bool>(HttpStatusCode.BadRequest);
-        _context.Employees.Remove(employee);
-        await _context.SaveChangesAsync();
-        return new Response<bool>(true);
+            return new Response<GetEmployeeDto>(mapped);
+        }
+        catch (Exception ex)
+        {
+            return new Response<GetEmployeeDto>(HttpStatusCode.InternalServerError, ex.Message);
+        }
     }
-    catch (Exception ex)
-    {
-        return new Response<bool>(HttpStatusCode.InternalServerError, ex.Message);
-    }
-}
 
+    public async Task<Response<bool>> UpdateEmployeeAsync(UpdateEmployeeDto model)
+    {
+        try
+        {
+            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == model.Id);
+            if (employee == null) return new Response<bool>(HttpStatusCode.BadRequest);
+            employee.Position = model.Position;
+            employee.FirtName = model.FirtName;
+            employee.LastName = model.LastName;
+            employee.FatherName = model.FatherName;
+            await _context.SaveChangesAsync();
+            return new Response<bool>(true);
+        }
+        catch (Exception ex)
+        {
+            return new Response<bool>(HttpStatusCode.InternalServerError, ex.Message);
+        }
+    }
+
+    public async Task<Response<bool>> DeleteEmployeeAsync(string id)
+    {
+        try
+        {
+            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
+            if (employee == null) return new Response<bool>(HttpStatusCode.BadRequest);
+            _context.Employees.Remove(employee);
+            await _context.SaveChangesAsync();
+            return new Response<bool>(true);
+        }
+        catch (Exception ex)
+        {
+            return new Response<bool>(HttpStatusCode.InternalServerError, ex.Message);
+        }
+    }
 }
