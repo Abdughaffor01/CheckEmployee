@@ -1,4 +1,5 @@
 using Domain.DTOs.EmployeeDTOs;
+using Domain.Enums;
 using Infrastructure.Services.EmployeeServices;
 using Microsoft.AspNetCore.Mvc;
 namespace WebApi.Controllers;
@@ -10,6 +11,17 @@ public class EmployeeController : ControllerBase
     private readonly IEmployeeService _service;
     public EmployeeController(IEmployeeService service)=>_service = service;
 
+    
+    [HttpGet("GetPositionsAsync")]
+    public async Task<IActionResult> GetPositionAsync()
+    {
+        var positions = new List<string>();
+        positions.Add(Position.Engineer.ToString());
+        positions.Add(Position.Manager.ToString());
+        positions.Add(Position.CandleTester.ToString());
+        return StatusCode(200, positions);
+    } 
+    
     [HttpGet("GetEmployeesAsync")]
     public async Task<IActionResult> GetEmployeesAsync()
     {
@@ -25,14 +37,14 @@ public class EmployeeController : ControllerBase
     } 
     
     [HttpPost("AddEmployeeAsync")]
-    public async Task<IActionResult> AddEmployeeAsync(AddEmployeeDto model)
+    public async Task<IActionResult> AddEmployeeAsync([FromForm]AddEmployeeDto model)
     {
         var res = await _service.AddEmployeeAsync(model);
         return StatusCode(res.StatusCode, res);
     } 
     
     [HttpPut("UpdateEmployeeAsync")]
-    public async Task<IActionResult> UpdateEmployeeAsync(UpdateEmployeeDto model)
+    public async Task<IActionResult> UpdateEmployeeAsync([FromForm]UpdateEmployeeDto model)
     {
         var res = await _service.UpdateEmployeeAsync(model);
         return StatusCode(res.StatusCode, res);
